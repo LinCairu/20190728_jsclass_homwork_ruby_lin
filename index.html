@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>先挑戰打彈珠台!!!</title>
+    <script type="text/javascript" src="js.js"></script>
+</head>
+
+<body>
+
+    <h1 id="head"></h1>
+    <hr>
+    <hr>
+    <canvas id="canvas" width="468" height="320" style="border: 1px solid black"></canvas>
+
+
+
+
+
+    <script>
+
+        head.innerHTML = "Ruby";
+        let ctx = canvas.getContext("2d");
+        let isDrag = false;
+        let bg = new Image();
+        let ball = new Image();
+        let bar = new Image();
+        let block = new Image();
+        bg.src = "bg.png";
+        ball.src = "ball.png";
+        bar.src = "buttom_bar.png";
+        block.src = "block.png";
+        let collisionsblock = false;
+        let collisionsbar = false;
+        let ballout = false;
+
+        let ballX = 0, ballY = 0;
+        let barX = 0, barY = 290;
+        let blockX = 120, blockY = 42;
+        let bx =6, by = 6;
+
+        let blockwidth = 90, blockheight = 37;
+        let ballwidth = 24, ballheight = 24;
+        let barwidth = 128, barheight = 30;
+
+        bg.onload = function () {
+            ctx.drawImage(bg, 0, 0);
+        }
+        function refreshview() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(bg, 0, 0);
+            ctx.drawImage(bar, barX, barY);
+            ctx.drawImage(block, blockX, blockY);
+            ctx.drawImage(ball, ballX, ballY);
+        }
+        setInterval(refreshview, 17);
+        function moveball() {
+            if (ballX < 0 || ballX + ballwidth > canvas.width) {
+                
+                console.log(bx);
+                bx *= -1;
+            }
+            if (ballY < 0 || ballY + ballheight > canvas.height) {
+           
+                by *= -1;
+            }
+            ballX += bx;
+            ballY += by;
+
+            collisionsbar();
+            collisionsblock();
+            ballout();
+        }
+        setInterval(moveball, 30);
+
+        canvas.onmousemove = function (event) {
+            barX = event.offsetX - (barwidth / 2);
+            // barY = event.offsetY - (barwidth / 2);
+        }
+        collisionsblock = function (ball, block) {
+            if (ballX < blockX + blockwidth &&
+                ballX + ballwidth > blockX &&
+                ballY < blockY + blockheight &&
+                blockheight + ballY > blockY) {
+                // console.log('撞到磚塊!');
+                // ctx.fillRect(blockX, blockY, blockwidth, blockheight);
+                ctx.clearRect(blockX, blockY, blockwidth, blockheight);
+                 alert("運氣真好!贏了!");
+                bx *= -1;
+                by *= -1;
+
+                return true;
+                clearall();
+            } else {
+                // console.log('沒有撞到繼續努力!');
+                return false;
+
+            }
+            ballX += bx;
+            ballY += by;
+        }
+        collisionsbar = function (ball, bar) {
+            if (ballX < barX + barwidth &&
+                ballX + ballwidth > barX &&
+                ballY < barY + barheight &&
+                barheight + ballY > barY) {
+                console.log('撞到BAR');
+                // alert("撞到BAR");
+                bx = bx + parseInt(Math.random() * 4 - 2);
+                by = by + parseInt(Math.random() * 4 - 2);
+                bx *= -1;
+                by *= -1;
+                return true;
+            } else {
+                console.log('球跑跑');
+                // alert("lose");
+                return false;
+            }
+            ballX += bx;
+            ballY += by;
+        }
+
+
+        ballout = function () {
+            if (ballY > 298) {
+                alert("lose");
+                clearall();
+            }
+        }
+        function clearall() {
+            ballX = 0;
+            ballY = 0;
+            ctx.clearRect(0, 0, 468, 320);
+        }
+
+
+ //實現物件複製的function,js原生沒有clone
+    function clone(source) {
+        // if (null == source || "object" != typeof source) return source;  //如果你傳遞進來是空或不是物件，就把source原封不動傳回去
+        if (source == null || typeof (source) != "object") return null;
+        let target = new Object();
+        for (let attr in source) { //這些attr屬性在source裡面
+            if (typeof (source[attr]) != "object") {
+                target[attr] = source[attr];
+            } else {
+                target[attr] = clone(source[attr]);
+            }
+
+        }
+        return target;
+    }
+
+
+
+    </script>
+</body>
+
+</html>
